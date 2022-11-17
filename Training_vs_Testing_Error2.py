@@ -9,8 +9,8 @@ import random
 import numpy.matlib
 seed(1)
 
-nb_epoch		= 20
-l_rate  		= 0.2
+nb_epoch		= 50
+l_rate  		= 0.1
 plot_each_epoch	= False
 stop_early 		= True
 N=1000
@@ -43,26 +43,33 @@ matrix=matrix[IDXrand]
 
 weights= [	 0.20,	1.00,  -1.00		] # initial weights specified in problem
 
+TrainingData=matrix[0: np.int16(0.5*matrix.shape[0]),0:3]
+TestData=matrix[np.int16(0.5*matrix.shape[0]):,0:3]
+TrainingLabels=matrix[0: np.int16(0.5*matrix.shape[0]),3]
+TestLabels=matrix[np.int16(0.5*matrix.shape[0]):,3]
+
 plt.figure(figsize=(8.5, 6), dpi=130)
 #IDX=Labels==0
 #Temp= (IDX==True).sum()
-plt.scatter(x=matrix[matrix[:,-1]==0,1], y=matrix[matrix[:,-1]==0,2], color='red', s=50, alpha=8/10)
-plt.scatter(x=matrix[matrix[:,-1]==1,1], y=matrix[matrix[:,-1]==1,2], color='blue', s=50, alpha=8/10)
+plt.scatter(x=matrix[matrix[:,-1]==0,1], y=matrix[matrix[:,-1]==0,2], color='black', marker='o',s=50, alpha=8/10)
+plt.scatter(x=matrix[matrix[:,-1]==1,1], y=matrix[matrix[:,-1]==1,2], color='black', marker='x', s=50, alpha=8/10)
+plt.scatter(x=TrainingData[TrainingLabels==0,1], y=TrainingData[TrainingLabels==0,2], color='red', marker='.', s=50, alpha=8/10)
+plt.scatter(x=TrainingData[TrainingLabels==1,1], y=TrainingData[TrainingLabels==1,2], color='blue', marker='.', s=50, alpha=8/10)
+#plt.scatter(x=TestData[TestLabels==0,1], y=TestData[TestLabels==0,2], color='red', marker='s', s=50, alpha=8/10)
+#plt.scatter(x=TestData[TestLabels==1,1], y=TestData[TestLabels==1,2], color='blue', marker='s', s=50, alpha=8/10)
 plt.show()
 
 # each matrix row: up to last row = inputs, last row = y (classification)
 
 #Percentages=np.array([0.01,0.05,0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45,0.5])
-Percentages=np.arange(0.05, 0.9, 0.025)
+Percentages=np.arange(0.05, 0.9, 0.05)
 FinalTrainingAcc=np.zeros([Percentages.shape[0]])
 FinalTestAcc=np.zeros([Percentages.shape[0]])
 for i in range(Percentages.shape[0]):
     Per=Percentages[i]
-    TrainingData=matrix[0: np.int16(Per*matrix.shape[0]),0:3]
-    TestData=matrix[np.int16(Per*matrix.shape[0]):,0:3]
-    TrainingLabels=matrix[0: np.int16(Per*matrix.shape[0]),3]
-    TestLabels=matrix[np.int16(Per*matrix.shape[0]):,3]
-    Matrix=np.c_[TrainingData, TrainingLabels]
+    Current_TrainingData=TrainingData[0: np.int16(Per*TrainingData.shape[0]),0:3]
+    Current_TrainingLabels=TrainingLabels[0: np.int16(Per*TrainingData.shape[0])]
+    Matrix=np.c_[Current_TrainingData, Current_TrainingLabels]
     TestMatrix=np.c_[TestData, TestLabels]
     #plt.figure(figsize=(8.5, 6), dpi=130)
     #plt.scatter(x=TrainingData[TrainingLabels==0,1], y=TrainingData[TrainingLabels==0,2], marker="o", color='red', s=50, alpha=8/10)
@@ -73,9 +80,10 @@ for i in range(Percentages.shape[0]):
 
     for epoch in range(nb_epoch):
         cur_acc = accuracy(Matrix,weights)
-        print("Training accuracy: ",cur_acc)
+        #print("Training accuracy: ",cur_acc)
         test_acc = accuracy(TestMatrix,weights)
-        print("Test accuracy: ",test_acc) 
+        #print("Test accuracy: ",test_acc) 
+        weights= UpdateWeights(Matrix,weights,l_rate)
     
     FinalTrainingAcc[i]=cur_acc
     FinalTestAcc[i]=test_acc
@@ -83,8 +91,8 @@ for i in range(Percentages.shape[0]):
 plt.figure(figsize=(8.5, 6), dpi=130)
 #IDX=Labels==0
 #Temp= (IDX==True).sum()
-plt.plot(Percentages, FinalTrainingAcc, color='red', label='Training accuracy')
-plt.plot(Percentages, FinalTestAcc, color='blue', label='Test accuracy')
+plt.plot(Percentages, FinalTrainingAcc, color='blue', label='Training accuracy')
+plt.plot(Percentages, FinalTestAcc, color='red', label='Test accuracy')
 plt.xlabel('Percentage of training data')
 plt.ylabel('Accuracy (%)')
 plt.legend()

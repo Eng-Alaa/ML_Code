@@ -158,7 +158,7 @@ def predict(inputs,weights):
 		activation += i*w 
 	return 1.0 if activation>=0.0 else 0.0
 
-def UpdateWeights(Matrix,weights):
+def UpdateWeights(Matrix,weights,l_rate):
     for i in range(len(Matrix)):
         prediction = predict(Matrix[i][:-1],weights)
         Error = Matrix[i][-1]-prediction
