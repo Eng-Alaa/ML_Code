@@ -1,10 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# input data
 X=np.array([1, 2, 3, 4])
+
+# target values
 y=np.array([1, 2, 3, 4])
 #y=np.array([1, -1, 3.5, 5])
 
+# cost function $C=\frac{1}{2N}\sum_i^{N} (h(\textbf{x}_i)-y_i)^2=\frac{1}{2N}\sum_i^{N=4} (w_1 \textbf{x}_i-y_i)^2$
 def Cost_function(weight,X,y):
     sum=0
     for i in range(len(X)):
