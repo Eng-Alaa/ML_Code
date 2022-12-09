@@ -49,6 +49,7 @@ plt.title('Simple Linear Regression')
 plt.show()
 
 # Verification.
+# Here, we compare our results from normal equation regression model and builtin regression model in Scikit learn
 from sklearn.linear_model import LinearRegression
 lr=LinearRegression()    # Object.
 lr.fit(x,y)              # fit method.
